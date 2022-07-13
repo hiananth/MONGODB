@@ -1,0 +1,71 @@
+import pymongo
+
+connection=pymongo.MongoClient("mongodb://localhost:27017")
+mydb=connection["empDb"]
+myemployee=mydb["employees"]
+
+
+
+
+while True:
+    print("  MENU  \n")
+    print("1. Add an employee  \n")
+    print("2. View all employee  \n")
+    print("3. Search an employee  \n")
+    print("4. Delete an employee  \n")
+    print("5. Update an employe  \n")
+    print("6. Employee name starting with  \n")
+    print("7. Exit ")
+    option=int(input("Select an option"))
+    if option==1:
+        empCode=input("Enter the employee code")
+        empName=input("Enter the employee name")
+        empDesignation=input("Enter designation")
+        data={"empCode":empCode,"empName":empName,"empDesignation":empDesignation}
+        print(data )
+        myemployee.insert_one(data)
+        print("Add an Option selected")
+    elif option==2:
+        print("view all employe option selected")
+
+        result=myemployee.find({},{"_id":0,"empDesignation":0}).sort("empName",-1)
+        
+
+        print(result)
+        for i in result:
+            print(i) 
+    elif option==3:
+        print("Search option selected")
+        empCode=input("Enter the employecode")
+        data={"empCode":empCode}
+        result=myemployee.find(data,{"_id":0})
+        for i in result:
+            print(i)
+    
+    
+    elif option==4:
+        print("delete option selected")
+        empCode=input("Enter the employeeCode to be deleted")
+        data={"empCode":empCode}
+        myemployee.delete_one(data)
+        print("Data deleted Successfully")
+    
+    elif option==5:
+        print("update option selected") 
+        empCode=input("Enter the employee code to be update")
+        empName=input("Enter an employee name")
+        empDesignation=input("Enter the designation")
+        setData={"empCode":empCode}
+        newData={"$set":{"empName":empName,"empDesignation":empDesignation}}
+        myemployee.update_one(setData,newData)
+        print("Data update")
+
+    elif option==6:
+        ip=input("Enter the starting letter")   
+        condition={"empName":{"$gte":ip}} 
+        result=myemployee.find(condition,{"_id":0,"empDesignation":0})
+    for i in result:
+        print(i)
+    else:
+
+        break 
